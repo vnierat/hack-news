@@ -1,6 +1,7 @@
 import { atom } from "recoil";
+import { Article } from "../api/newsApi";
 
-export const articleListState = atom<any[]>({
-  key: "articleListState",
+export const RankingListState = atom<Article[]>({
+  key: "RankingListState",
   default: [],
 });

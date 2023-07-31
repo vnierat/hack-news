@@ -1,30 +1,30 @@
 import React, { useEffect, useState, FC } from "react";
 import { useRecoilState } from "recoil";
-import Header from "./components/Header";
-import ArticleList from "./components/ArticleList";
-import { fetchArticles, Article } from "./api/hackerNewsApi";
-import { articleListState } from "./recoil/atoms";
+import Header from "./components/header/Header";
+import RankingList from "./components/list/RankingList";
+import { getArticlesList, Article } from "./api/newsApi";
+import { RankingListState } from "./recoil/atoms";
 
 const App: FC = () => {
-  const [, setArticleList] = useRecoilState<Article[]>(articleListState);
+  const [, setRankingList] = useRecoilState<Article[]>(RankingListState);
   const [page] = useState(1);
 
   useEffect(() => {
     const getArticles = async () => {
       try {
-        const { articles: fetchedArticles } = await fetchArticles(page);
-        setArticleList(fetchedArticles); // Use the articles array directly
+        const { articles: fetchedArticles } = await getArticlesList(page);
+        setRankingList(fetchedArticles);
       } catch (error) {
         console.error("Error fetching articles:", error);
       }
     };
     getArticles();
-  }, [setArticleList, page]);
+  }, [setRankingList, page]);
 
   return (
     <div>
       <Header />
-      <ArticleList />
+      <RankingList />
     </div>
   );
 };

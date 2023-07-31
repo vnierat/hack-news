@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://hacker-news.firebaseio.com/v0";
+export const BASE_URL = "https://hacker-news.firebaseio.com/v0";
 
 export interface Article {
   title: string;
@@ -10,15 +10,15 @@ export interface Article {
   by: string;
 }
 
-export interface FetchArticlesResult {
+export interface GetArticlesResult {
   articles: Article[];
   responseLength: number;
 }
 
-export const fetchArticles = async (
+export const getArticlesList = async (
   page: number,
   pageSize: number = 20
-): Promise<FetchArticlesResult> => {
+): Promise<GetArticlesResult> => {
   try {
     const response = await axios.get<number[]>(`${BASE_URL}/topstories.json`);
     const articleIds: number[] = response.data;
@@ -27,7 +27,7 @@ export const fetchArticles = async (
     );
 
     const articlesResponses = await Promise.all(articlesPromises);
-    const articles = articlesResponses.map((res: any) => res.data);
+    const articles = articlesResponses.map(({ data }) => data);
 
     // sort articles by score
     articles.sort((a: Article, b: Article) => b.score - a.score);

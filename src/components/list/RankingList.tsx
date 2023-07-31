@@ -1,13 +1,14 @@
-import React, { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC } from "react";
 import { useRecoilState } from "recoil";
-import { Article } from "../api/hackerNewsApi";
-import { articleListState } from "../recoil/atoms";
-import { fetchArticles } from "../api/hackerNewsApi";
-import "./ArticleList.css";
+import { Article } from "../../api/newsApi";
+import { RankingListState } from "../../recoil/atoms";
+import { getArticlesList } from "../../api/newsApi";
+import "./RankingList.css";
+import ArticleItem from "./item/ArticleItem";
 
-const ArticleList: FC = () => {
-  const [articles, setArticleList] =
-    useRecoilState<Article[]>(articleListState);
+const RankingList: FC = () => {
+  const [articles, setRankingList] =
+    useRecoilState<Article[]>(RankingListState);
   const [page, setPage] = useState(1);
   const [responseLength, setResponseLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,8 +20,8 @@ const ArticleList: FC = () => {
         const {
           articles: initialArticles,
           responseLength: initialResponseLength,
-        } = await fetchArticles(page);
-        setArticleList(initialArticles);
+        } = await getArticlesList(page);
+        setRankingList(initialArticles);
         setResponseLength(initialResponseLength);
       } catch (error) {
         console.error("Error fetching initial articles:", error);
@@ -33,15 +34,15 @@ const ArticleList: FC = () => {
     if (articles.length === 0) {
       getInitialArticles();
     }
-  }, [articles.length, page, setArticleList]);
+  }, [articles.length, page, setRankingList]);
 
   const handleLoadMore = async () => {
     setIsLoading(true);
     try {
       const nextPage = page + 1;
       const { articles: newArticles, responseLength: newResponseLength } =
-        await fetchArticles(nextPage);
-      setArticleList((prevArticles) => [...prevArticles, ...newArticles]);
+        await getArticlesList(nextPage);
+      setRankingList((prevArticles) => [...prevArticles, ...newArticles]);
       setResponseLength(newResponseLength);
       setPage(nextPage);
     } catch (error) {
@@ -54,18 +55,9 @@ const ArticleList: FC = () => {
   return (
     <div className="globalWrapper">
       <div>
-        {articles.map(({ title, score, by, url }: Article, index: number) => (
-          <div className="articleWrapper" key={index}>
-            <div className="infosWrapper">
-              <span className="circle">
-                <div className="number">{index + 1}</div>
-              </span>
-              <span>{title}</span>
-            </div>
-            <div className="additionalInfos">
-              <span>Score: {score} - </span> <span>By: {by} - </span>{" "}
-              {url && <span>Source: {new URL(url).origin} </span>}
-            </div>
+        {articles.map((article: Article, index: number) => (
+          <div key={index}>
+            <ArticleItem index={index} article={article} />
           </div>
         ))}
       </div>
@@ -82,4 +74,4 @@ const ArticleList: FC = () => {
   );
 };
 
-export default ArticleList;
+export default RankingList;
