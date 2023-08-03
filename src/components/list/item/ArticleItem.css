@@ -7,8 +7,8 @@
 }
 
 .circle {
-  width: 30px;
-  height: 30px;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: #84c96b;
   border-radius: 50%;
   display: flex;

@@ -5,3 +5,8 @@ export const RankingListState = atom<Article[]>({
   key: "RankingListState",
   default: [],
 });
+
+export const LoadingState = atom({
+  key: "loadingState",
+  default: false,
+});

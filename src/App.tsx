@@ -1,25 +1,29 @@
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, FC } from "react";
 import { useRecoilState } from "recoil";
 import Header from "./components/header/Header";
 import RankingList from "./components/list/RankingList";
 import { getArticlesList, Article } from "./api/newsApi";
-import { RankingListState } from "./recoil/atoms";
+import { LoadingState, RankingListState } from "./recoil/atoms";
 
 const App: FC = () => {
   const [, setRankingList] = useRecoilState<Article[]>(RankingListState);
-  const [page] = useState(1);
+  const [, setIsLoading] = useRecoilState(LoadingState);
 
   useEffect(() => {
-    const getArticles = async () => {
+    const fetchArticles = async () => {
       try {
-        const { articles: fetchedArticles } = await getArticlesList(page);
-        setRankingList(fetchedArticles);
+        setIsLoading(true);
+        const newArticles = await getArticlesList();
+        setRankingList(newArticles);
       } catch (error) {
         console.error("Error fetching articles:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    getArticles();
-  }, [setRankingList, page]);
+
+    fetchArticles();
+  }, [setRankingList, setIsLoading]);
 
   return (
     <div>
